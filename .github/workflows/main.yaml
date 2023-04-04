@@ -27,7 +27,7 @@ jobs:
           channel: 'dev'
       - run: dart tool/env.dart
       - run: flutter config --enable-web
-      - run: flutter build web -t ./lib/Pages/main.dart
+      - run: flutter build web -t ./lib/main.dart
       - uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}

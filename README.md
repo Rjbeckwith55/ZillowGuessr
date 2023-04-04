@@ -2,8 +2,10 @@
 
 TODO: Rename without Zillow in the name :)
 
-Install on Windows kinda
+Super rough UI design slides: https://docs.google.com/presentation/d/1nWR4xvhKAuICEPr7JJRQ4zJ-rHXRX755Jzu2auaJGjw/edit#slide=id.g22a7faf6fbb_0_27 
+Probably easier to just look at Geoguessr and Zillow and copy exactly what they have.
 
+Install instructions on Windows kinda
 
 Install Android Studio
 
