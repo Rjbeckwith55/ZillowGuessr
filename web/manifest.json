@@ -1,0 +1,11 @@
+{
+  "name": "zillow_guesser",
+  "short_name": "zillow_guesser",
+  "start_url": ".",
+  "display": "minimal-ui",
+  "background_color": "#0175C2",
+  "theme_color": "#0175C2",
+  "description": "Zillow Guesser",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}

@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+      - main
+name: Zillow Guesser CI/CD
+jobs:
+  unit:
+    name: Unit and Widget Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v1
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'dev'
+      - run: dart tool/env.dart
+      - run: flutter pub get
+      #      - run: flutter format lib/ test/ test_driver/
+      - run: flutter test --coverage
+      - run: flutter pub run tool/remove_coverage.dart -f coverage/lcov.info -r "lib/widgets/","lib/login/","lib/Pages/",".env.dart","main.dart"
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: "coverage/lcov.info"
+
+  web:
+    name: Build website
+    runs-on: ubuntu-latest
+    needs: [unit]
+    steps:
+      - uses: cedx/setup-dart@v1
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'dev'
+      - run: dart tool/env.dart
+      - run: flutter config --enable-web
+      - run: flutter build web -t ./lib/Pages/main.dart
+      - uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          BASE_BRANCH: master
+          BRANCH: gh-pages
+          FOLDER: build/web
