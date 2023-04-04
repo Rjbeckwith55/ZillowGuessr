@@ -28,7 +28,7 @@ jobs:
       - run: dart tool/env.dart
       - run: flutter config --enable-web
       - run: flutter build web -t ./lib/main.dart
-      - uses: JamesIves/github-pages-deploy-action@releases/v3
+      - uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           BASE_BRANCH: main
