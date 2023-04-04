@@ -15,7 +15,6 @@ jobs:
       - run: dart tool/env.dart
       - run: flutter pub get
       - run: flutter test --coverage
-      - run: flutter pub run tool/remove_coverage.dart -f coverage/lcov.info -r "lib/widgets/","lib/login/","lib/Pages/",".env.dart","main.dart"
 
   web:
     name: Build website
