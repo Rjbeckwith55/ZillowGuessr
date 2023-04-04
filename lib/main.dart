@@ -7,11 +7,39 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Text Generate',
-      home: RandomWords(),
+      title: 'Zillow Guesser',
+      home: PlayPage(),
     );
   }
 }
+
+// Create a Form widget.
+class PlayPage extends StatefulWidget {
+  @override
+  PlayPageState createState() {
+    return PlayPageState();
+  }
+}
+
+class PlayPageState extends State<PlayPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('First Route'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text('Play Game'),
+          onPressed: () {
+            // Navigate to second route when tapped.
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class RandomWordsState extends State<RandomWords> {
   final _suggestions=<WordPair>[];
   final _biggerFont=const TextStyle(fontSize: 18.0);
@@ -19,7 +47,7 @@ class RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
    return Scaffold(
     appBar: AppBar(
-      title: Text('Startup Name Generator'),
+      title: Text('Zillow Guesser'),
     ),
     body: _buildSuggestions(),
   );
