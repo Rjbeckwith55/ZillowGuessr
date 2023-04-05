@@ -32,6 +32,5 @@ jobs:
       - run: flutter build web -t ./lib/main.dart
       - uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
-          BASE_BRANCH: main
-          BRANCH: gh-pages
-          FOLDER: build/web
+          branch: gh-pages
+          folder: build/web
