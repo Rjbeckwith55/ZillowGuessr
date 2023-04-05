@@ -3,6 +3,8 @@ on:
     branches:
       - main
 name: Zillow Guesser CI/CD
+permissions:
+  contents: write
 jobs:
   unit:
     name: Unit and Widget Tests
@@ -30,7 +32,6 @@ jobs:
       - run: flutter build web -t ./lib/main.dart
       - uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           BASE_BRANCH: main
           BRANCH: gh-pages
           FOLDER: build/web
