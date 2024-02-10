@@ -112,6 +112,7 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO Fetch from DB
     var lat = "lat";
     var long = "long";
     var baths = "1";

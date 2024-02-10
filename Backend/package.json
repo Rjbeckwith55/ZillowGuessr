@@ -1,0 +1,12 @@
+{
+  "name": "house_backend",
+  "version": "1.0.0",
+  "description": "House Backend",
+  "main": "backend.js",
+  "scripts": {
+    "start": "node backend.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
