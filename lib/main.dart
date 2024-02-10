@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:zillow_guesser/House.dart';
+import 'package:zillow_guesser/Network.dart';
 import 'friends_list.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() => runApp(MyApp());
 
@@ -37,7 +39,7 @@ class PlayPageState extends State<PlayPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const InvitePage()),
+              MaterialPageRoute(builder: (context) => const GameScreen()),
             );
           },
         ),
@@ -45,49 +47,49 @@ class PlayPageState extends State<PlayPage> {
     );
   }
 }
-
-class InvitePage extends StatelessWidget {
-  const InvitePage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Invite Friends'),
-      ),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // centers vertically
-          crossAxisAlignment:
-              CrossAxisAlignment.stretch, // centers horizontally
-          children: [
-            ElevatedButton(
-              child: Text('Play!'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GameScreen()),
-                );
-              },
-            ),
-            ElevatedButton(
-              child: Text('Invite Friends'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => FriendsList()),
-                );
-              },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Go back!'),
-            ),
-          ]),
-    );
-  }
-}
+//
+// class InvitePage extends StatelessWidget {
+//   const InvitePage();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Invite Friends'),
+//       ),
+//       body: Column(
+//           mainAxisAlignment: MainAxisAlignment.center, // centers vertically
+//           crossAxisAlignment:
+//               CrossAxisAlignment.stretch, // centers horizontally
+//           children: [
+//             ElevatedButton(
+//               child: Text('Play!'),
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(builder: (context) => GameScreen()),
+//                 );
+//               },
+//             ),
+//             ElevatedButton(
+//               child: Text('Invite Friends'),
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(builder: (context) => FriendsList()),
+//                 );
+//               },
+//             ),
+//             ElevatedButton(
+//               onPressed: () {
+//                 Navigator.pop(context);
+//               },
+//               child: const Text('Go back!'),
+//             ),
+//           ]),
+//     );
+//   }
+// }
 
 class Loading extends StatelessWidget {
   const Loading();
@@ -112,80 +114,93 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO Fetch from DB
-    var lat = "lat";
-    var long = "long";
-    var baths = "1";
-    var beds = "3";
-    var squareFeet = 1500;
-    var year = "1955";
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Guess the price'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // centers vertically
-        crossAxisAlignment: CrossAxisAlignment.center, // centers horizontally
-        children: [
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center, // centers vertically
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // centers horizontally
-              children: [
-                ImageSlideshow(
-                  /// Width of the [ImageSlideshow].
-                  width: 600,
+        appBar: AppBar(
+          title: const Text('Guess the Price'),
+        ),
+        body: FutureBuilder<House>(
+          future: getRandomHouse(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Column(
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // centers vertically
+                crossAxisAlignment:
+                    CrossAxisAlignment.center, // centers horizontally
+                children: [
+                  Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // centers vertically
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // centers horizontally
+                      children: [
+                        ImageSlideshow(
+                          /// Width of the [ImageSlideshow].
+                          width: 600,
 
-                  /// Height of the [ImageSlideshow].
-                  height: 600,
+                          /// Height of the [ImageSlideshow].
+                          height: 600,
 
-                  /// The page to show when first creating the [ImageSlideshow].
-                  initialPage: 0,
+                          /// The page to show when first creating the [ImageSlideshow].
+                          initialPage: 0,
 
-                  /// The color to paint the indicator.
-                  indicatorColor: Colors.blue,
+                          /// The color to paint the indicator.
+                          indicatorColor: Colors.blue,
 
-                  /// The color to paint behind th indicator.
-                  indicatorBackgroundColor: Colors.grey,
+                          /// The color to paint behind th indicator.
+                          indicatorBackgroundColor: Colors.grey,
 
-                  children: [
-                    Image.network(
-                      'https://photos.zillowstatic.com/fp/e664f0c3c87d4a2d344146d5c1adf8fc-p_e.jpg',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.network(
-                      'https://photos.zillowstatic.com/fp/b6daf9d5b6d48101bc27719b07b66c6d-p_e.jpg',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.network(
-                      'https://photos.zillowstatic.com/fp/00669b1b504cd204b56873444ffe8255-p_e.jpg',
-                      fit: BoxFit.cover,
-                    ),
-                  ],
+                          children: snapshot.data!.images.map((url) {
+                            return Image.network(
+                              url,
+                              fit: BoxFit.cover,
+                            );
+                          }).toList(),
 
-                  /// Called whenever the page in the center of the viewport changes.
-                  onPageChanged: (value) {
-                    print('Page changed: $value');
-                  },
+                          /// Called whenever the page in the center of the viewport changes.
+                          onPageChanged: (value) {
+                            print('Page changed: $value');
+                          },
 
-                  isLoop: true,
-                ),
-              ]),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center, // centers vertically
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // centers horizontally
-              children: [Text("Baths: $baths "), Text("Beds: $beds")]),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center, // centers vertically
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // centers horizontally
-              children: [
-                Text("Square Ft: $squareFeet "),
-                Text("Year Built: $year")
-              ]),
-        ],
-      ),
-    );
+                          isLoop: true,
+                        ),
+                      ]),
+                  Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // centers vertically
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // centers horizontally
+                      children: [
+                        Text("Baths: ${snapshot.data!.baths} "),
+                        Text("Beds: ${snapshot.data!.beds}")
+                      ]),
+                  Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // centers vertically
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // centers horizontally
+                      children: [
+                        Text("Square Feet: ${snapshot.data!.squareFeet} "),
+                        Text("Year Built: ${snapshot.data!.year}")
+                      ]),
+                  Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.center, // centers vertically
+                      crossAxisAlignment:
+                      CrossAxisAlignment.center, // centers horizontally
+                      children: [
+                        Text("Guess the price:"),
+                      ]),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return Text(
+                  'Error: ${snapshot.error}, \n${snapshot.data}, \n${snapshot.connectionState}, \n${snapshot.stackTrace}');
+            }
+
+            // By default, show a loading spinner.
+            return const CircularProgressIndicator();
+          },
+        ));
   }
 }
