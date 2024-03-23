@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:zillow_guesser/House.dart';
 import 'package:zillow_guesser/Network.dart';
 import 'friends_list.dart';
@@ -135,19 +136,10 @@ class GameScreen extends StatelessWidget {
                           CrossAxisAlignment.center, // centers horizontally
                       children: [
                         ImageSlideshow(
-                          /// Width of the [ImageSlideshow].
                           width: 600,
-
-                          /// Height of the [ImageSlideshow].
                           height: 600,
-
-                          /// The page to show when first creating the [ImageSlideshow].
                           initialPage: 0,
-
-                          /// The color to paint the indicator.
                           indicatorColor: Colors.blue,
-
-                          /// The color to paint behind th indicator.
                           indicatorBackgroundColor: Colors.grey,
 
                           children: snapshot.data!.images.map((url) {
@@ -171,7 +163,7 @@ class GameScreen extends StatelessWidget {
                       crossAxisAlignment:
                           CrossAxisAlignment.center, // centers horizontally
                       children: [
-                        Text("Baths: ${snapshot.data!.baths} "),
+                        Text("Baths: ${snapshot.data!.baths} | "),
                         Text("Beds: ${snapshot.data!.beds}")
                       ]),
                   Row(
@@ -181,16 +173,19 @@ class GameScreen extends StatelessWidget {
                           CrossAxisAlignment.center, // centers horizontally
                       children: [
                         Text("Square Feet: ${snapshot.data!.squareFeet} "),
-                        Text("Year Built: ${snapshot.data!.year}")
+                        Text("Year Built: ${snapshot.data!.yearBuilt}")
                       ]),
                   Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.center, // centers vertically
-                      crossAxisAlignment:
-                      CrossAxisAlignment.center, // centers horizontally
-                      children: [
-                        Text("Guess the price:"),
-                      ]),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Guess the list price: "),
+                      SizedBox(
+                          width:
+                              10), // Add some space between text and input field
+                      NumberInputField(),
+                    ],
+                  ),
                 ],
               );
             } else if (snapshot.hasError) {
@@ -199,8 +194,83 @@ class GameScreen extends StatelessWidget {
             }
 
             // By default, show a loading spinner.
-            return const CircularProgressIndicator();
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           },
         ));
+  }
+}
+class NumberInputField extends StatefulWidget {
+  @override
+  _NumberInputFieldState createState() => _NumberInputFieldState();
+}
+
+class _NumberInputFieldState extends State<NumberInputField> {
+  final TextEditingController _controller = TextEditingController();
+  bool showPrefix = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {
+        showPrefix = _controller.text.isNotEmpty;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 150, // Adjust width according to your requirement
+      child: TextField(
+        controller: _controller,
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: [
+          ThousandsFormatter(), // Custom formatter to insert commas and enforce maximum value
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9,\.]')),
+        ],
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          prefixIcon:  Icon(Icons.attach_money),
+        ),
+        onSubmitted: (_) => postGuess("test"),
+      ),
+    );
+  }
+}
+
+class ThousandsFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // If there's no change in the value, return the new value
+    if (oldValue.text == newValue.text) {
+      return newValue;
+    }
+
+    // Remove commas from the new value
+    String newText = newValue.text.replaceAll(',', '');
+
+    // Insert commas after every three digits from the right
+    final regExp = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    newText = newText.replaceAllMapped(regExp, (Match match) => '${match[1]},');
+
+    // Remove leading zeros
+    newText = newText.replaceFirst(RegExp(r'^0+(?!$)'), '');
+
+    // Check if the value exceeds the maximum
+    int parsedValue = int.tryParse(newText.replaceAll(',', '')) ?? 0;
+    if (parsedValue > 999999999) {
+      // Return the old value if the new value exceeds the maximum
+      return oldValue;
+    }
+
+    // Return the new value with commas inserted
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
   }
 }

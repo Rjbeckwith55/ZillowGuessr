@@ -17,3 +17,15 @@ Future<House> getRandomHouse() async {
     throw Exception('Failed to get a house');
   }
 }
+
+void postGuess(String guess) async {
+  print('submitting guess: $guess');
+  // final response = await http.get(Uri.parse(_FETCH_HOUSE_URL));
+  // if (response.statusCode == 200) {
+  //   var data = json.decode(response.body);
+  //   House house = House.fromJson(data);
+  //   return house;
+  // } else {
+  //   throw Exception('Failed to get a house');
+  // }
+}

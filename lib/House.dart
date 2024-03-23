@@ -8,11 +8,12 @@ class House {
   String baths;
   String beds;
   int squareFeet;
-  String year;
+  String yearBuilt;
   double lotSize;
+  // String type;
 
 
-  House(this.images, this.lat, this.long, this.baths, this.beds, this.squareFeet, this.year, this.lotSize);
+  House(this.images, this.lat, this.long, this.baths, this.beds, this.squareFeet, this.yearBuilt, this.lotSize);
 
   factory House.fromJson(Map<String, dynamic> json) {
     House house = House(
